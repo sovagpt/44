@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Trading Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #00ff88;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1em;
+        }
+        
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 80vh;
+            overflow: hidden;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            margin: 20px;
+            background: #000;
+        }
+        
+        .iframe-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            z-index: 10;
+            border-bottom: 1px solid #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .iframe-mask h2 {
+            color: #00ff88;
+            font-size: 1.5em;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transform: translateY(-120px);
+        }
+        
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-top: 2px solid #00ff88;
+            margin-top: auto;
+        }
+        
+        .status {
+            padding: 10px 20px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            margin: 20px;
+            color: #ff4444;
+            text-align: center;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #00ff88;
+            font-size: 1.2em;
+        }
+        
+        .crop-info {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            color: #00ff88;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>My Trading Platform</h1>
+        <p>Professional Trading Terminal & Portfolio Management</p>
+    </div>
+    
+    <div class="loading" id="loadingStatus">
+        🔄 Testing iframe embed capability...
+    </div>
+    
+    <div class="iframe-container" id="iframeContainer" style="display: none;">
+        <div class="iframe-mask">
+            <h2>🔥 LIVE TRADING TERMINAL</h2>
+        </div>
+        <iframe 
+            id="ayaFrame"
+            src="https://www.aya-lm.fun/"
+            title="AYA Trading Terminal"
+            loading="lazy">
+        </iframe>
+        <div class="crop-info">
+            Header cropped • Showing terminal, positions & trades
+        </div>
+    </div>
+    
+    <div class="status" id="statusMessage" style="display: none;">
+        ❌ Unable to embed AYA terminal - site blocks iframe embedding
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2025 My Trading Platform | Powered by Advanced AI Trading Technology</p>
+    </div>
+
+    <script>
+        const iframe = document.getElementById('ayaFrame');
+        const container = document.getElementById('iframeContainer');
+        const status = document.getElementById('statusMessage');
+        const loading = document.getElementById('loadingStatus');
+        
+        // Test if iframe loads successfully
+        iframe.onload = function() {
+            console.log('Iframe loaded successfully');
+            loading.style.display = 'none';
+            container.style.display = 'block';
+            
+            // Try to detect if content is actually loaded
+            setTimeout(() => {
+                try {
+                    // This will throw an error if blocked by CORS
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    console.log('Iframe content accessible');
+                } catch (e) {
+                    console.log('Iframe content blocked by CORS, but frame may still display');
+                }
+            }, 2000);
+        };
+        
+        iframe.onerror = function() {
+            console.log('Iframe failed to load');
+            loading.style.display = 'none';
+            status.style.display = 'block';
+        };
+        
+        // Timeout fallback
+        setTimeout(() => {
+            if (loading.style.display !== 'none') {
+                loading.innerHTML = '⚠️ Taking longer than expected... Site may block embedding';
+                
+                // Show iframe anyway after 5 seconds to test
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    container.style.display = 'block';
+                }, 3000);
+            }
+        }, 5000);
+        
+        // Monitor iframe for load issues
+        setInterval(() => {
+            try {
+                if (iframe.contentWindow.location.href === 'about:blank') {
+                    console.log('Iframe content may be blocked');
+                }
+            } catch (e) {
+                // Expected for cross-origin
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
