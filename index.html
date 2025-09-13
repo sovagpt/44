@@ -16,15 +16,12 @@
             color: white;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
-            margin: 0;
-            padding: 0;
         }
         
         .header {
             background: #0a0e27;
             padding: 20px 0;
             text-align: center;
-            position: relative;
             z-index: 100;
         }
         
@@ -44,20 +41,16 @@
             color: #888;
         }
         
-        .iframe-wrapper {
+        .iframe-container {
             width: 100%;
-            height: calc(100vh - 200px);
-            margin: 0;
-            padding: 0;
+            height: calc(100vh - 100px);
             overflow: hidden;
         }
         
         iframe {
             width: 100%;
-            height: calc(100% + 405px);
+            height: calc(100vh + 200px);
             border: 0;
-            margin: 0;
-            padding: 0;
             transform: translateY(-365px);
             display: block;
         }
@@ -93,7 +86,7 @@
         <p>Professional Trading Terminal & Portfolio Management</p>
     </div>
     
-    <div class="iframe-wrapper">
+    <div class="iframe-container">
         <div class="loading" id="loadingStatus">
             🔄 Loading trading terminal...
         </div>
@@ -121,7 +114,6 @@
             document.getElementById('statusMessage').style.display = 'block';
         }
         
-        // Timeout fallback
         setTimeout(() => {
             const loading = document.getElementById('loadingStatus');
             if (loading.style.display !== 'none') {
