@@ -12,107 +12,77 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            background: #0a0e27;
             color: white;
             font-family: 'Arial', sans-serif;
-            min-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
         }
         
         .header {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
+            background: #0a0e27;
+            padding: 20px 0;
             text-align: center;
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid #00ff88;
+            position: relative;
+            z-index: 100;
         }
         
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2.2em;
             background: linear-gradient(45deg, #00ff88, #00ccff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-weight: bold;
         }
         
         .header p {
             opacity: 0.8;
-            font-size: 1.1em;
+            font-size: 1em;
+            color: #888;
         }
         
-        .iframe-container {
-            position: relative;
+        .iframe-wrapper {
             width: 100%;
-            height: 80vh;
-            overflow: hidden;
-            border: 2px solid #00ff88;
-            border-radius: 10px;
-            margin: 20px;
-            background: #000;
-        }
-        
-        .iframe-mask {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 120px;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            z-index: 10;
-            border-bottom: 1px solid #00ff88;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .iframe-mask h2 {
-            color: #00ff88;
-            font-size: 1.5em;
+            height: calc(100vh - 100px);
+            margin: 0;
+            padding: 0;
         }
         
         iframe {
             width: 100%;
-            height: 100%;
-            border: none;
-            transform: translateY(-120px);
-        }
-        
-        .footer {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border-top: 2px solid #00ff88;
-            margin-top: auto;
-        }
-        
-        .status {
-            padding: 10px 20px;
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid #ff4444;
-            border-radius: 5px;
-            margin: 20px;
-            color: #ff4444;
-            text-align: center;
+            height: calc(100% + 200px);
+            border: 0;
+            margin: 0;
+            padding: 0;
+            transform: translateY(-110px);
+            display: block;
         }
         
         .loading {
-            text-align: center;
-            padding: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             color: #00ff88;
             font-size: 1.2em;
+            z-index: 50;
         }
         
-        .crop-info {
+        .status {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff4444;
             border-radius: 5px;
-            font-size: 0.8em;
-            color: #00ff88;
-            z-index: 20;
+            color: #ff4444;
+            text-align: center;
+            z-index: 50;
         }
     </style>
 </head>
@@ -122,82 +92,41 @@
         <p>Professional Trading Terminal & Portfolio Management</p>
     </div>
     
-    <div class="loading" id="loadingStatus">
-        🔄 Testing iframe embed capability...
-    </div>
-    
-    <div class="iframe-container" id="iframeContainer" style="display: none;">
-        <div class="iframe-mask">
-            <h2>🔥 LIVE TRADING TERMINAL</h2>
+    <div class="iframe-wrapper">
+        <div class="loading" id="loadingStatus">
+            🔄 Loading trading terminal...
         </div>
+        
         <iframe 
             id="ayaFrame"
             src="https://www.aya-lm.fun/"
-            title="AYA Trading Terminal"
-            loading="lazy">
+            title="Trading Terminal"
+            onload="handleLoad()"
+            onerror="handleError()">
         </iframe>
-        <div class="crop-info">
-            Header cropped • Showing terminal, positions & trades
+        
+        <div class="status" id="statusMessage" style="display: none;">
+            ❌ Unable to load trading terminal
         </div>
-    </div>
-    
-    <div class="status" id="statusMessage" style="display: none;">
-        ❌ Unable to embed AYA terminal - site blocks iframe embedding
     </div>
 
     <script>
-        const iframe = document.getElementById('ayaFrame');
-        const container = document.getElementById('iframeContainer');
-        const status = document.getElementById('statusMessage');
-        const loading = document.getElementById('loadingStatus');
+        function handleLoad() {
+            document.getElementById('loadingStatus').style.display = 'none';
+        }
         
-        // Test if iframe loads successfully
-        iframe.onload = function() {
-            console.log('Iframe loaded successfully');
-            loading.style.display = 'none';
-            container.style.display = 'block';
-            
-            // Try to detect if content is actually loaded
-            setTimeout(() => {
-                try {
-                    // This will throw an error if blocked by CORS
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    console.log('Iframe content accessible');
-                } catch (e) {
-                    console.log('Iframe content blocked by CORS, but frame may still display');
-                }
-            }, 2000);
-        };
-        
-        iframe.onerror = function() {
-            console.log('Iframe failed to load');
-            loading.style.display = 'none';
-            status.style.display = 'block';
-        };
+        function handleError() {
+            document.getElementById('loadingStatus').style.display = 'none';
+            document.getElementById('statusMessage').style.display = 'block';
+        }
         
         // Timeout fallback
         setTimeout(() => {
+            const loading = document.getElementById('loadingStatus');
             if (loading.style.display !== 'none') {
-                loading.innerHTML = '⚠️ Taking longer than expected... Site may block embedding';
-                
-                // Show iframe anyway after 5 seconds to test
-                setTimeout(() => {
-                    loading.style.display = 'none';
-                    container.style.display = 'block';
-                }, 3000);
+                loading.style.display = 'none';
             }
         }, 5000);
-        
-        // Monitor iframe for load issues
-        setInterval(() => {
-            try {
-                if (iframe.contentWindow.location.href === 'about:blank') {
-                    console.log('Iframe content may be blocked');
-                }
-            } catch (e) {
-                // Expected for cross-origin
-            }
-        }, 1000);
     </script>
 </body>
 </html>
