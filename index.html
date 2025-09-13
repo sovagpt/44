@@ -46,18 +46,16 @@
     .iframe-wrapper {
       position: relative;
       width: 100%;
-      height: calc(100vh - 100px); /* viewport minus header */
-      overflow: hidden; /* crop overflow */
+      height: calc(100vh - 100px); /* visible height */
+      overflow: hidden; /* hide cropped bottom */
     }
 
     iframe {
       width: 100%;
-      height: calc(100% + 100px); /* extend height */
+      height: calc(100% + 100px); /* extend by cropped amount */
       border: 0;
-      margin: 0;
-      padding: 0;
-      transform: translateY(-100px); /* shift up to hide footer */
       display: block;
+      transform: translateY(0); /* keep top intact */
     }
 
     .loading {
